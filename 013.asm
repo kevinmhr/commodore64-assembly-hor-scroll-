@@ -39,7 +39,7 @@ rts
 sprites
  
    lda spriteindex2
- lda #193
+ ;lda #193
  sta $7f8 
 lda #192
 sta $7f9
@@ -202,12 +202,12 @@ lda #128
 sta spriteindex2
  
 
- 
-left
 
+left
+ lda #194
+sta spriteindex2
 sec
 
-;lda spriteindex2
  
  ;cmp #140
  ;beq resetspriteleft
@@ -382,7 +382,7 @@ right
  ;lda spriteindex2
  ; adc #1
  ; sta spriteindex2
-   lda #131
+   lda #193
   sta spriteindex2
  
  ldx #0
