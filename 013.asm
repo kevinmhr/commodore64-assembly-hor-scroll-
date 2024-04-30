@@ -92,7 +92,7 @@ inc spritecount
   
  
  
-bne spritesloop
+;bne spritesloop
  
  
  
@@ -185,6 +185,12 @@ sta $d000,x
 rts
 
 down
+lda downtrigger
+
+cmp #1
+beq sodown
+rts
+sodown
 clc
  lda chrpositionh
 adc #1
@@ -292,11 +298,11 @@ movejoy
 				cmp #7   
 				beq right
 				cmp #13   
-				beq down
+				;beq down
                                 cmp #14   
 				beq up
 				     
-           
+           jsr down
 
         
 				rts
@@ -368,7 +374,11 @@ dec chrpositionh
 
 rts
 right 
-
+lda fronttrigger
+cmp #1
+beq soright
+rts
+soright
  clc
  
 
@@ -514,6 +524,87 @@ collided
 jsr pickupsnd
  
 rts
+
+
+spritecollision
+
+jsr collisiondown
+
+jsr collisionright
+
+rts
+collisiondown
+
+lda $d001
+
+lsr
+lsr
+lsr
+sbc #3
+tax
+lda displayaddressl,x
+sta zeropagel
+
+lda displayaddressh,x
+sta zeropageh
+
+lda $d000
+lsr
+lsr
+lsr
+sbc #2
+tay
+
+lda (zeropagel),y
+
+cmp #230
+beq lockdown
+rts
+
+collisionright
+lda $d001
+ adc #10
+lsr
+lsr
+lsr
+sbc #3
+tax
+lda displayaddressl,x
+sta zeropagel
+
+lda displayaddressh,x
+sta zeropageh
+
+lda $d000
+adc #20
+lsr
+lsr
+lsr
+ 
+tay
+
+lda (zeropagel),y
+
+cmp #230
+beq lockfront
+rts
+
+
+
+
+
+
+rts
+lockdown
+lda #0
+sta downtrigger
+rts
+
+lockfront
+lda #0
+sta fronttrigger
+rts
+
 
 
 

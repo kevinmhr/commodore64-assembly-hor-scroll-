@@ -58,8 +58,8 @@ spriteindex2= $38
 spriteindex3= $97
 spriteindex4= $96
 shoottrigger =$88
-
-
+downtrigger= $66
+fronttrigger= $67
 *=$0801
         !byte    $1E, $08, $0A, $00, $9E, $20, $28,$32, $30, $38, $30, $29, $3a, $8f, $20, $28, $43, $29, $20, $32, $30, $32, $31, $20, $4D, $54, $53, $56, $00, $00, $00
  
@@ -87,7 +87,8 @@ sta shoottrigger
 lda $01    
 and #251    
 sta $01    
- 
+ lda #1
+ sta downtrigger
 copyoriginalchartonewlocation
  
 sei
@@ -267,7 +268,7 @@ mainloop
 
   jsr sprites
  jsr drawpickups
- jsr character1
+; jsr character1
    jmp mainloop
  
 irq
@@ -291,7 +292,12 @@ cmp #59
   
  ; jsr right
  ; jsr display
-
+ lda #1
+ sta downtrigger
+ 
+ sta fronttrigger
+ 
+ jsr spritecollision
     jsr movejoy
     
     
