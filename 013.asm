@@ -71,28 +71,6 @@ lda spriteindex4
 
  
  
-
-ldy #0
-spritesloop
-   lda spriteindex2
-  cmp #141
-  beq resetspriteindex2
-  lda spriteindex2
-  cmp #142
-  beq resetspriteindex2
-    lda spriteindex2
-  cmp #143
-  beq resetspriteindex2
-inc spritecount
- 
- ldx spritecount
- cpx #255
- beq resetspritecount
-
-  
- 
- 
-;bne spritesloop
  
  
  
@@ -116,7 +94,7 @@ changechar
   adc #2
   sta spriteindex
 
-jsr spritesloop
+ 
 rts
 
 
@@ -159,18 +137,7 @@ outt
 
  
 rts 
-shoot
- 
 
- 
-
-
-ldy #0
-jsr shootl
-
-rts
- 
- 
  
 stopcarl
 lda #115
@@ -198,19 +165,39 @@ sta chrpositionh
  ldx #0
  
 
-lda $d001,x
+lda $d001 
 adc #3
-sta $d001,x
+sta $d001 
 
 rts
 resetspriteright
 lda #128
 sta spriteindex2
  
+shoot
+ 
 
+ 
+
+
+ldy #0
+jsr shootl
+
+rts
+ 
+ 
 
 left
- lda #194
+
+lda backtrigger
+cmp #1
+beq soleft
+
+rts
+soleft
+
+
+ lda #195
 sta spriteindex2
 sec
 
@@ -262,18 +249,56 @@ sec
 lda chrposition
 sbc #1
 sta chrposition
-bcc dechib
+;bcc dechib
 
 
 jsr drawbk
 
 storefromleft 
-rts
+ jsr down
+ lda #196
+sta spriteindex2
 
-movejoy 
-                
-             
+rts
+jumproutine
+
+
  
+lda downtrigger
+cmp #0
+beq sojump
+rts
+ 
+sojump
+
+jsr spritecollision
+ dec zptemp1
+  dec zptemp1
+   dec zptemp1
+    dec zptemp1
+     dec zptemp1
+ lda zptemp1
+cmp #40
+ beq nojump
+lda downtrigger
+ cmp #1
+ 
+
+beq nojump 
+ 
+
+ 
+ dec $d001
+lda zptemp1
+cmp #100
+ bne sojump
+nojump
+ 
+rts
+ 
+movejoy 
+          
+        jsr down
                
                lda $dc00
                  cmp #$6f
@@ -300,11 +325,11 @@ movejoy
 				cmp #13   
 				;beq down
                                 cmp #14   
-				beq up
+				beq jumproutine
 				     
-           jsr down
+          
 
-        
+     
 				rts
 
 up
@@ -335,9 +360,9 @@ rts
 leftup
  
 jsr left
-jsr up
+jsr jumproutine
 
-
+ jsr down
 
 rts
 leftdown
@@ -348,8 +373,10 @@ jsr down
 rts
 
 upright 
-jsr up
+jsr jumproutine
 jsr right
+
+ jsr down
 rts
 downright 
 jsr down
@@ -377,6 +404,9 @@ right
 lda fronttrigger
 cmp #1
 beq soright
+  jsr down
+
+
 rts
 soright
  clc
@@ -394,7 +424,8 @@ soright
  ; sta spriteindex2
    lda #193
   sta spriteindex2
- 
+   lda #194
+  sta spriteindex2
  ldx #0
 
 lda $d000,x
@@ -436,6 +467,7 @@ jsr drawbk
  
 
 rts
+
 
 
 
@@ -531,7 +563,7 @@ spritecollision
 jsr collisiondown
 
 jsr collisionright
-
+jsr collisionleft
 rts
 collisiondown
 
@@ -563,11 +595,11 @@ rts
 
 collisionright
 lda $d001
- adc #10
+ sbc #20
 lsr
 lsr
 lsr
-sbc #3
+sbc #2
 tax
 lda displayaddressl,x
 sta zeropagel
@@ -576,7 +608,7 @@ lda displayaddressh,x
 sta zeropageh
 
 lda $d000
-adc #20
+ 
 lsr
 lsr
 lsr
@@ -588,7 +620,33 @@ lda (zeropagel),y
 cmp #230
 beq lockfront
 rts
+collisionleft
+lda $d001
+ sbc #20
+lsr
+lsr
+lsr
+sbc #2
+tax
+lda displayaddressl,x
+sta zeropagel
 
+lda displayaddressh,x
+sta zeropageh
+
+lda $d000
+ sbc #30
+lsr
+lsr
+lsr
+ 
+tay
+
+lda (zeropagel),y
+
+cmp #230
+beq lockback
+rts
 
 
 
@@ -596,6 +654,11 @@ rts
 
 rts
 lockdown
+
+             lda $d001
+            
+             sta zptemp1
+
 lda #0
 sta downtrigger
 rts
@@ -606,5 +669,12 @@ sta fronttrigger
 rts
 
 
+lockback
+lda #0
+sta backtrigger
+rts
 
+
+
+ 
 
