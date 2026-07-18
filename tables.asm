@@ -2,6 +2,7 @@
 catx !byte 0
 catrev !byte 2
 entitymovetime !byte 0
+entanim !byte 0
 entitymovetime2 !byte 0
 spritenum !byte 0
 noncolidchar !byte 32
